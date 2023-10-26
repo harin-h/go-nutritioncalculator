@@ -9,9 +9,13 @@ import (
 
 type FavList struct {
 	gorm.Model
-	UserId string
-	Name   string
-	List   string
+	UserId  string
+	Name    string
+	Menues  string
+	List    string
+	Protein float64
+	Fat     float64
+	Carb    float64
 }
 
 func init() {

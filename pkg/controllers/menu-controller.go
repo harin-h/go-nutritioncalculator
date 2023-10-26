@@ -8,6 +8,8 @@ import (
 
 	"golang.org/x/exp/slices"
 
+	"strings"
+
 	"github.com/gorilla/mux"
 	"github.com/harin-h/nutritioncalculator/pkg/models"
 	"github.com/harin-h/nutritioncalculator/pkg/utils"
@@ -91,8 +93,8 @@ func LikeMenu(w http.ResponseWriter, r *http.Request) {
 	userId := vars["userId"]
 	menuDetails, db := models.GetMenuById(Id)
 	userDetails, _ := models.GetUserById(userId)
-	temp_slice := []byte(userDetails.FavoriteMenu)
-	if slices.Contains(temp_slice, []byte(menuId)[0]) {
+	temp_slice := strings.Split(userDetails.FavoriteMenu, ",")
+	if slices.Contains(temp_slice, menuId) {
 		menuDetails.Like = menuDetails.Like - 1
 	} else {
 		menuDetails.Like = menuDetails.Like + 1

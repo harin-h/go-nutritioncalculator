@@ -15,8 +15,9 @@ var RegisterBookStoreRoutes = func(router *mux.Router) {
 	router.HandleFunc("/menu/like/{menuId}/{userId}", controllers.LikeMenu).Methods("PUT") //
 
 	// User
-	router.HandleFunc("/user/", controllers.CreateUser).Methods("POST")                                 //
-	router.HandleFunc("/user/{userId}", controllers.GetUser).Methods("GET")                             //
+	router.HandleFunc("/user/", controllers.CreateUser).Methods("POST")             //
+	router.HandleFunc("/user/user_id/{userId}", controllers.GetUser).Methods("GET") //
+	router.HandleFunc("/user/user_name/{username}", controllers.GetUserName).Methods("GET")
 	router.HandleFunc("/user/goal/{userId}", controllers.UpdateUserGoal).Methods("PUT")                 //
 	router.HandleFunc("/user/fav_menu/{userId}/{menuId}", controllers.UpdateUserFavMenu).Methods("PUT") //
 

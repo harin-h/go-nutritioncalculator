@@ -38,3 +38,9 @@ func GetUserById(Id string) (User, *gorm.DB) {
 	db.Where("user_id=?", Id).Find(&user)
 	return user, db
 }
+
+func GetUserByUserName(UserName string) (User, *gorm.DB) {
+	var user User
+	db.Where("user_name=?", UserName).Find(&user)
+	return user, db
+}

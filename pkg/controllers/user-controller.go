@@ -37,6 +37,17 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
+func GetUserName(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	vars := mux.Vars(r)
+	username := vars["username"]
+	userDetails, _ := models.GetUserByUserName(username)
+	res, _ := json.Marshal(userDetails)
+	w.Header().Set("Content-Type", "pkglication/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(res)
+}
+
 func UpdateUserGoal(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	var updateUser = &models.User{}
