@@ -21,7 +21,6 @@ type FavList struct {
 func init() {
 	config.Connect()
 	db = config.GetDB()
-	// db.AutoMigrate(&FavList{})
 	db.AutoMigrate(FavList{})
 }
 
@@ -32,16 +31,12 @@ func GetFavList(Id string) []FavList {
 }
 
 func (favlist *FavList) CreateFavList() *FavList {
-	// db.NewRecord(favlist)
-	// db.Create(&favlist)
 	db.Create(favlist)
 	return favlist
 }
 
-func DeleteFavList(Id int64) FavList {
-	var favlist FavList
-	db.Where("ID=?", Id).Delete(favlist)
-	return favlist
+func DeleteFavList(Id int64) {
+	db.Where("ID=?", Id).Delete(FavList{})
 }
 
 func GetFavListById(Id int64) (FavList, *gorm.DB) {

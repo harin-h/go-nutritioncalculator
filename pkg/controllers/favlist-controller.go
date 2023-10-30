@@ -13,48 +13,36 @@ import (
 
 var NewFavList models.FavList
 
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-}
-
 func GetFavList(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userId := vars["userId"]
 	FavLists := models.GetFavList(userId)
 	res, _ := json.Marshal(FavLists)
-	w.Header().Set("Content-Type", "pkglication/json")
-	enableCors(&w)
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
 func CreateFavList(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	CreateFavList := &models.FavList{}
 	utils.ParseBody(r, CreateFavList)
-	f := CreateFavList.CreateFavList()
-	res, _ := json.Marshal(f)
+	favlist := CreateFavList.CreateFavList()
+	res, _ := json.Marshal(favlist)
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
 func DeleteFavList(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	vars := mux.Vars(r)
 	favlistId := vars["favlistId"]
 	Id, err := strconv.ParseInt(favlistId, 0, 0)
 	if err != nil {
 		fmt.Println("error while parsing")
 	}
-	favlist := models.DeleteFavList(Id)
-	res, _ := json.Marshal(favlist)
-	w.Header().Set("Content-Type", "pkglication/json")
+	models.DeleteFavList(Id)
 	w.WriteHeader(http.StatusOK)
-	w.Write(res)
 }
 
 func UpdateFavList(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	var updateFavList = &models.FavList{}
 	utils.ParseBody(r, updateFavList)
 	vars := mux.Vars(r)
@@ -67,12 +55,8 @@ func UpdateFavList(w http.ResponseWriter, r *http.Request) {
 	if updateFavList.Name != "" {
 		favlistDetails.Name = updateFavList.Name
 	}
-	if updateFavList.List != "" {
-		favlistDetails.List = updateFavList.List
-	}
-	db.Save(&favlistDetails)
+	db.Save(favlistDetails)
 	res, _ := json.Marshal(favlistDetails)
-	w.Header().Set("Content-Type", "pkglication/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }

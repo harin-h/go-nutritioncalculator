@@ -22,13 +22,10 @@ type User struct {
 func init() {
 	config.Connect()
 	db = config.GetDB()
-	// db.AutoMigrate(&User{})
 	db.AutoMigrate(User{})
 }
 
 func (user *User) CreateUser() *User {
-	// db.NewRecord(menu)
-	// db.Create(&user)
 	db.Create(user)
 	return user
 }

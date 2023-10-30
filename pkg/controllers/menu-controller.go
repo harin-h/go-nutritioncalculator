@@ -18,72 +18,33 @@ import (
 var NewMenu models.RawMenu
 
 func GetMenu(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	newMenues := models.GetAllMenues()
 	res, _ := json.Marshal(newMenues)
-	w.Header().Set("Content-Type", "pkglication/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
 func CreateMenu(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	CreateMenu := &models.RawMenu{}
 	utils.ParseBody(r, CreateMenu)
-	m := CreateMenu.CreateMenu()
-	res, _ := json.Marshal(m)
+	menu := CreateMenu.CreateMenu()
+	res, _ := json.Marshal(menu)
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
 func DeleteMenu(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	vars := mux.Vars(r)
 	menuId := vars["menuId"]
 	Id, err := strconv.ParseInt(menuId, 0, 0)
 	if err != nil {
 		fmt.Println("error while parsing")
 	}
-	menu := models.DeleteMenu(Id)
-	res, _ := json.Marshal(menu)
-	w.Header().Set("Content-Type", "pkglication/json")
+	models.DeleteMenu(Id)
 	w.WriteHeader(http.StatusOK)
-	w.Write(res)
-}
-
-func UpdateMenu(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
-	var updateMenu = &models.RawMenu{}
-	utils.ParseBody(r, updateMenu)
-	vars := mux.Vars(r)
-	menuId := vars["menuId"]
-	Id, err := strconv.ParseInt(menuId, 0, 0)
-	if err != nil {
-		fmt.Println("error while parsing")
-	}
-	menuDetails, db := models.GetMenuById(Id)
-	if updateMenu.Name != "" {
-		menuDetails.Name = updateMenu.Name
-	}
-	if updateMenu.Protein != 0 {
-		menuDetails.Protein = updateMenu.Protein
-	}
-	if updateMenu.Fat != 0 {
-		menuDetails.Fat = updateMenu.Fat
-	}
-	if updateMenu.Carb != 0 {
-		menuDetails.Carb = updateMenu.Carb
-	}
-	menuDetails.Like = 0
-	db.Save(&menuDetails)
-	res, _ := json.Marshal(menuDetails)
-	w.Header().Set("Content-Type", "pkglication/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(res)
 }
 
 func LikeMenu(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	vars := mux.Vars(r)
 	menuId := vars["menuId"]
 	Id, err := strconv.ParseInt(menuId, 0, 0)
@@ -99,9 +60,8 @@ func LikeMenu(w http.ResponseWriter, r *http.Request) {
 	} else {
 		menuDetails.Like = menuDetails.Like + 1
 	}
-	db.Save(&menuDetails)
+	db.Save(menuDetails)
 	res, _ := json.Marshal(menuDetails)
-	w.Header().Set("Content-Type", "pkglication/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }

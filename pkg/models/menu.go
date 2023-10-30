@@ -30,13 +30,10 @@ type RawMenu struct {
 func init() {
 	config.Connect()
 	db = config.GetDB()
-	// db.AutoMigrate(&RawMenu{})
 	db.AutoMigrate(RawMenu{})
 }
 
 func (menu *RawMenu) CreateMenu() *RawMenu {
-	// db.NewRecord(menu)
-	// db.Create(&menu)
 	db.Create(menu)
 	return menu
 }
@@ -47,10 +44,8 @@ func GetAllMenues() []Menu {
 	return Menues
 }
 
-func DeleteMenu(Id int64) RawMenu {
-	var menu RawMenu
-	db.Where("Id=?", Id).Delete(menu)
-	return menu
+func DeleteMenu(Id int64) {
+	db.Where("Id=?", Id).Delete(RawMenu{})
 }
 
 func GetMenuById(Id int64) (RawMenu, *gorm.DB) {

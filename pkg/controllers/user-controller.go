@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	_ "fmt"
 	"net/http"
 	"sort"
 	"strings"
@@ -17,7 +16,6 @@ import (
 var NewUser models.User
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	CreateUser := &models.User{}
 	utils.ParseBody(r, CreateUser)
 	u := CreateUser.CreateUser()
@@ -27,29 +25,44 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	vars := mux.Vars(r)
 	userId := vars["userId"]
 	userDetails, _ := models.GetUserById(userId)
+	userDetails.Password = ""
 	res, _ := json.Marshal(userDetails)
-	w.Header().Set("Content-Type", "pkglication/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
 func GetUserName(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	vars := mux.Vars(r)
 	username := vars["username"]
 	userDetails, _ := models.GetUserByUserName(username)
 	res, _ := json.Marshal(userDetails)
-	w.Header().Set("Content-Type", "pkglication/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(res)
+}
+
+func LoginUser(w http.ResponseWriter, r *http.Request) {
+	var RequestUserLogin = &models.User{}
+	utils.ParseBody(r, RequestUserLogin)
+	userDetails, _ := models.GetUserById(RequestUserLogin.UserId)
+	var responseData map[string]bool
+	if RequestUserLogin.Password == userDetails.Password && len(RequestUserLogin.Password) > 0 {
+		responseData = map[string]bool{
+			"IsPasswordCorrect": true,
+		}
+	} else {
+		responseData = map[string]bool{
+			"IsPasswordCorrect": false,
+		}
+	}
+	res, _ := json.Marshal(responseData)
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
 func UpdateUserGoal(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	var updateUser = &models.User{}
 	utils.ParseBody(r, updateUser)
 	vars := mux.Vars(r)
@@ -70,15 +83,13 @@ func UpdateUserGoal(w http.ResponseWriter, r *http.Request) {
 	if updateUser.Carb != 0 {
 		userDetails.Carb = updateUser.Carb
 	}
-	db.Save(&userDetails)
+	db.Save(userDetails)
 	res, _ := json.Marshal(userDetails)
-	w.Header().Set("Content-Type", "pkglication/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
 func UpdateUserFavMenu(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	vars := mux.Vars(r)
 	menuId := vars["menuId"]
 	userId := vars["userId"]
@@ -101,9 +112,8 @@ func UpdateUserFavMenu(w http.ResponseWriter, r *http.Request) {
 		sort.Strings(temp_favlist)
 		userDetails.FavoriteMenu = strings.Join(temp_favlist, ",")
 	}
-	db.Save(&userDetails)
+	db.Save(userDetails)
 	res, _ := json.Marshal(userDetails)
-	w.Header().Set("Content-Type", "pkglication/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
