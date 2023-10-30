@@ -15,6 +15,7 @@ func main() {
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"})
+	credentialsOk := handlers.AllowCredentials()
 	routes.RegisterBookStoreRoutes(r)
-	log.Fatal(http.ListenAndServe(":3030", handlers.CORS(originsOk, headersOk, methodsOk)(r)))
+	log.Fatal(http.ListenAndServe(":3030", handlers.CORS(originsOk, headersOk, methodsOk, credentialsOk)(r)))
 }
