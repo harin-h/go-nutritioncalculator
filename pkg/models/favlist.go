@@ -59,7 +59,7 @@ func GetFavoriteListPrimaryKey() int64 {
 
 func GetFavList(Id string) []FavList {
 	var Favlists []FavList
-	db.Select(&Favlists, "SELECT * FROM fav_list WHERE user_id=$1 AND status=1", Id)
+	db.Select(&Favlists, "SELECT * FROM fav_list WHERE user_id=$1 AND status=1 ORDER BY id", Id)
 	return Favlists
 }
 

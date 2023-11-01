@@ -78,7 +78,8 @@ func GetAllMenues() []Menu {
 		menu.count_like
 	FROM menu INNER JOIN user_2023
 		ON menu.creator_id = user_2023.user_id
-	WHERE menu.status=1`)
+	WHERE menu.status=1
+	ORDER BY menu.id`)
 	return Menues
 }
 
