@@ -27,10 +27,12 @@ func GetMenu(w http.ResponseWriter, r *http.Request) {
 func CreateMenu(w http.ResponseWriter, r *http.Request) {
 	CreateMenu := &models.RawMenu{}
 	utils.ParseBody(r, CreateMenu)
-	menu := CreateMenu.CreateMenu()
-	res, _ := json.Marshal(menu)
+	fmt.Println(CreateMenu)
+	fmt.Println(models.GetMenuPrimaryKey())
+	CreateMenu.Id = models.GetMenuPrimaryKey() + 1
+	fmt.Println(CreateMenu)
+	CreateMenu.CreateMenu()
 	w.WriteHeader(http.StatusOK)
-	w.Write(res)
 }
 
 func DeleteMenu(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +62,7 @@ func LikeMenu(w http.ResponseWriter, r *http.Request) {
 	} else {
 		menuDetails.Like = menuDetails.Like + 1
 	}
-	db.Save(menuDetails)
+	db.MustExec(`UPDATE menu SET count_like=$1 WHERE id=$2`, menuDetails.Like, Id)
 	res, _ := json.Marshal(menuDetails)
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)

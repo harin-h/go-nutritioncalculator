@@ -1,22 +1,23 @@
 package config
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 var (
-	db *gorm.DB
+	db *sqlx.DB
 )
 
 func Connect() {
-	d, err := gorm.Open("mysql", "GoodDy:@g18o12o42dG@tcp(127.0.0.1:3306)/nutrition_calculator?charset=utf8&parseTime=True&loc=Local")
+
+	d, err := sqlx.Connect("postgres", "postgres://postgresql_nutritioncalculator_user:seJLjTpDqFZBN3vOpetgD9yMuIoXRCq2@dpg-cl01qrrjdq6s73b5qu00-a.singapore-postgres.render.com/postgresql_nutritioncalculator")
 	if err != nil {
 		panic(err)
 	}
 	db = d
 }
 
-func GetDB() *gorm.DB {
+func GetDB() *sqlx.DB {
 	return db
 }

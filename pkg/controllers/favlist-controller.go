@@ -25,10 +25,9 @@ func GetFavList(w http.ResponseWriter, r *http.Request) {
 func CreateFavList(w http.ResponseWriter, r *http.Request) {
 	CreateFavList := &models.FavList{}
 	utils.ParseBody(r, CreateFavList)
-	favlist := CreateFavList.CreateFavList()
-	res, _ := json.Marshal(favlist)
+	CreateFavList.Id = models.GetFavoriteListPrimaryKey() + 1
+	CreateFavList.CreateFavList()
 	w.WriteHeader(http.StatusOK)
-	w.Write(res)
 }
 
 func DeleteFavList(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +54,7 @@ func UpdateFavList(w http.ResponseWriter, r *http.Request) {
 	if updateFavList.Name != "" {
 		favlistDetails.Name = updateFavList.Name
 	}
-	db.Save(favlistDetails)
+	db.MustExec(`UPDATE fav_list SET name=$1 WHERE id=$2`, favlistDetails.Name, Id)
 	res, _ := json.Marshal(favlistDetails)
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)

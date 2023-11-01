@@ -18,10 +18,8 @@ var NewUser models.User
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	CreateUser := &models.User{}
 	utils.ParseBody(r, CreateUser)
-	u := CreateUser.CreateUser()
-	res, _ := json.Marshal(u)
+	CreateUser.CreateUser()
 	w.WriteHeader(http.StatusOK)
-	w.Write(res)
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
@@ -83,7 +81,9 @@ func UpdateUserGoal(w http.ResponseWriter, r *http.Request) {
 	if updateUser.Carb != 0 {
 		userDetails.Carb = updateUser.Carb
 	}
-	db.Save(userDetails)
+	tx := db.MustBegin()
+	tx.MustExec(`UPDATE user_2023 SET username=$1, weight=$2, protein=$3, fat=$4, carb=$5 WHERE user_id=$6`, userDetails.UserName, userDetails.Weight, userDetails.Protein, userDetails.Fat, userDetails.Carb, userDetails.UserId)
+	tx.Commit()
 	res, _ := json.Marshal(userDetails)
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
@@ -112,7 +112,9 @@ func UpdateUserFavMenu(w http.ResponseWriter, r *http.Request) {
 		sort.Strings(temp_favlist)
 		userDetails.FavoriteMenu = strings.Join(temp_favlist, ",")
 	}
-	db.Save(userDetails)
+	tx := db.MustBegin()
+	tx.MustExec(`UPDATE user_2023 SET favorite_menu=$1 WHERE user_id=$2`, userDetails.FavoriteMenu, userDetails.UserId)
+	tx.Commit()
 	res, _ := json.Marshal(userDetails)
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
